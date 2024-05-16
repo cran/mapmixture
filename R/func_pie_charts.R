@@ -10,6 +10,7 @@
 #' @param lon_column string or integer representing the longitude column.
 #' @param pie_colours vector of colours the same length as the number of clusters.
 #' @param border numeric value of zero or greater.
+#' @param border_col string denoting colour of pie border.
 #' @param opacity numeric value of zero to one.
 #' @param pie_size numeric value of zero or greater.
 #'
@@ -45,7 +46,7 @@
 #'   pie_size = 1
 #' )
 add_pie_charts <- function(df, admix_columns, lat_column, lon_column, pie_colours,
-                           border = 0.3, opacity = 1, pie_size = 1) {
+                           border = 0.3, border_col = "black", opacity = 1, pie_size = 1) {
 
   # Check the number of pie_colours is the same length as the number of clusters
   if ( ncol(df)-3 != length(pie_colours) ) {
@@ -72,13 +73,14 @@ add_pie_charts <- function(df, admix_columns, lat_column, lon_column, pie_colour
     location = .,
     cols = pie_colours,
     border = border,
-    opacity = opacity
+    opacity = opacity,
+    border_col = border_col
   ))
 
   # Pie chart size formula
   radius <- dplyr::case_when(
     # If absolute number has less than or equal to 3 digits
-    floor(log10(abs(coords$lat[1]))) + 1 <= 3  ~ 0.5 * pie_size,
+    floor(log10(abs(coords$lat[1]))) + 1 <= 3  ~ 1 * pie_size,
     # If absolute number has greater than 3 digits
     floor(log10(abs(coords$lat[1]))) + 1 > 3 && floor(log10(abs(coords$lat[1]))) ~ 80000 * pie_size,
   )
@@ -108,6 +110,7 @@ add_pie_charts <- function(df, admix_columns, lat_column, lon_column, pie_colour
 #' @param cols vector of colours the same length as the number of clusters.
 #' @param border numeric value of zero or greater.
 #' @param opacity numeric value of zero to one.
+#' @param border_col string denoting colour of pie border.
 #'
 #' @return A ggplot object.
 #' @export
@@ -125,7 +128,9 @@ add_pie_charts <- function(df, admix_columns, lat_column, lon_column, pie_colour
 #' )
 #'
 #' build_pie_chart(df, location = "London")
-build_pie_chart <- function(df, location, cols = NULL, border = 0.3, opacity = 1){
+build_pie_chart <- function(df, location, cols = NULL,
+                            border = 0.3, opacity = 1,
+                            border_col = "black"){
 
   # Subset data.frame by site
   df_site <- subset(df, df$site == location)
@@ -155,19 +160,9 @@ build_pie_chart <- function(df, location, cols = NULL, border = 0.3, opacity = 1
     circle <- grid::circleGrob(
       x = ggplot2::unit(0.5, "npc"),
       y = ggplot2::unit(0.5, "npc"),
-      r = ggplot2::unit(0.35, "npc"),
-      gp = grid::gpar(col = "black", fill = cluster_col, alpha = opacity, lwd = border)
+      r = ggplot2::unit(0.40, "npc"), # Issue #16
+      gp = grid::gpar(col = border_col, fill = cluster_col, alpha = opacity, lwd = border+0.4)
     )
-
-    # # Create a vertical line
-    # line <- grid::linesGrob(
-    #   x = c(0.5, 0.5),
-    #   y = c(0.5, ggplot2::unit(0.5 + 0.35, "npc")),
-    #   gp = grid::gpar(col = "black", lwd = border)
-    # )
-    #
-    # # Draw the circle and the line
-    # single_colour_pie <- grid::gTree(children = grid::gList(circle, line))
 
     # Plot
     plt <- ggplot2::ggplot() +
@@ -181,7 +176,7 @@ build_pie_chart <- function(df, location, cols = NULL, border = 0.3, opacity = 1
     plt <- ggplot2::ggplot(data = df_site)+
       ggplot2::geom_bar(
         ggplot2::aes(x = "", y = !!as.name("value"), fill = !!as.name("cluster")),
-        width = 1, stat = "identity", colour = "black",
+        width = 1, stat = "identity", colour = border_col,
         show.legend = FALSE, linewidth = border, alpha = opacity
       )+
       ggplot2::coord_polar(theta = "y")+

@@ -99,7 +99,7 @@ library(rnaturalearthhires)
 
 # Read in admixture file format 1
 file <- system.file("extdata", "admixture1.csv", package = "mapmixture")
-admixture3 <- read.csv(file)
+admixture1 <- read.csv(file)
 
 # Read in coordinates file
 file <- system.file("extdata", "coordinates.csv", package = "mapmixture")
@@ -116,6 +116,7 @@ map2 <- mapmixture(
   boundary = c(xmin=-15, xmax=16, ymin=40, ymax=62),
   pie_size = 1,
   pie_border = 0.3,
+  pie_border_col = "white",
   pie_opacity = 1,
   land_colour = "#d9d9d9",
   sea_colour = "#deebf7",
@@ -151,14 +152,14 @@ library(mapmixture)
 
 # Read in admixture file format 3
 file <- system.file("extdata", "admixture3.csv", package = "mapmixture")
-admixture1 <- read.csv(file)
+admixture3 <- read.csv(file)
 
 # Read in coordinates file
 file <- system.file("extdata", "coordinates.csv", package = "mapmixture")
 coordinates <- read.csv(file)
 
 # Run mapmixture
-map3 <- mapmixture(admixture1, coordinates, crs = 3035)
+map3 <- mapmixture(admixture3, coordinates, crs = 3035)
 # map3
 ```
 
@@ -194,7 +195,7 @@ map4 <- mapmixture(
   cluster_names = c("Ancestry 1","Ancestry 2"),
   crs = 4326,
   boundary = c(xmin=-15, xmax=16, ymin=40, ymax=62),
-  pie_size = 2,
+  pie_size = 1,
 )+
   # Add additional label to the map
   annotate("label",
@@ -253,7 +254,7 @@ map5 <- mapmixture(
   cluster_names = c("Ancestry 1","Ancestry 2"),
   crs = 4326,
   boundary = c(xmin=-20, xmax=20, ymin=40, ymax=62),
-  pie_size = 2.5,
+  pie_size = 1.3,
 )+
   # Adjust theme options
   theme(
@@ -321,7 +322,7 @@ map6 <- mapmixture(
   cluster_names = c("Ancestry 1","Ancestry 2"),
   crs = 4326,
   boundary = c(xmin=-20, xmax=20, ymin=40, ymax=62),
-  pie_size = 2.5,
+  pie_size = 1.3,
 )+
   # Adjust theme options
   theme(
